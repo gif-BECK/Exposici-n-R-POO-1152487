@@ -279,7 +279,99 @@ print(curso$estudiantes[[2]]$nombre)
 
 
 
+#Ejemplo de Interfaz Gráfica
 
+
+library(tcltk)
+library(R6)
+
+
+# Clase Reloj
+Reloj <- R6Class("Reloj",
+                 public = list(
+                   segundos = 0,
+                   minutos = 0,
+                   horas = 0,
+                   
+                   initialize = function(segundos = 0, minutos = 0, horas = 0) {
+                     self$segundos <- segundos
+                     self$minutos <- minutos
+                     self$horas <- horas
+                   },
+                   
+                   moverSegundero = function() {
+                     if (self$segundos == 59) {
+                       self$segundos <- 0
+                       self$moverMinutero()
+                     } else {
+                       self$segundos <- self$segundos + 1
+                     }
+                   },
+                   
+                   moverMinutero = function() {
+                     if (self$minutos == 59) {
+                       self$minutos <- 0
+                       self$moverHorario()
+                     } else {
+                       self$minutos <- self$minutos + 1
+                     }
+                   },
+                   
+                   moverHorario = function() {
+                     if (self$horas == 12) {
+                       self$horas <- 1
+                     } else {
+                       self$horas <- self$horas + 1
+                     }
+                   },
+                   
+                   obtenerHora = function() {
+                     sprintf(self$horas, self$minutos, self$segundos)
+                   }
+                 )
+)
+
+
+
+# Crear la interfaz gráfica
+ventana <- tktoplevel()
+tkwm.title(ventana, "Reloj")
+
+# Etiqueta para mostrar la hora
+etiquetaHora <- tklabel(ventana, text = miReloj$obtenerHora(), font = "Helvetica 24")
+tkpack(etiquetaHora, pady = 20)
+
+# Función para actualizar la etiqueta de la hora
+actualizarHora <- function() {
+  tkconfigure(etiquetaHora, text = miReloj$obtenerHora())
+}
+
+# Botón para avanzar el segundero
+botonSegundero <- tkbutton(ventana, text = "Avanzar Segundero", 
+                           command = function() {
+                             miReloj$moverSegundero()
+                             actualizarHora()
+                           })
+tkpack(botonSegundero, pady = 10)
+
+# Botón para avanzar el minutero
+botonMinutero <- tkbutton(ventana, text = "Avanzar Minutero", 
+                          command = function() {
+                            miReloj$moverMinutero()
+                            actualizarHora()
+                          })
+tkpack(botonMinutero, pady = 10)
+
+# Botón para avanzar el horario
+botonHorario <- tkbutton(ventana, text = "Avanzar Horario", 
+                         command = function() {
+                           miReloj$moverHorario()
+                           actualizarHora()
+                         })
+tkpack(botonHorario, pady = 10)
+
+# Mantener la interfaz abierta
+tkfocus(ventana)
 
 
 
